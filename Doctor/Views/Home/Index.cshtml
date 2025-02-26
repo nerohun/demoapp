@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Doctor.Models.PatientViewModel>
+@{
+    ViewData["Title"] = "Doctor View";
+}
+
+<table class="table" id="pagination">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TajNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Complaint)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Diagnosis)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ArrivedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastModifiedAt)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TajNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Complaint)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Diagnosis)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ArrivedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastModifiedAt)
+                </td>
+                <td>
+                    @Html.ActionLink("", "Edit", new { item.Id }, new { @class = "btn btn-outline-primary btn-def fa fa-solid fa-pen" }) |
+                    @Html.ActionLink("", "Details", new { item.Id }, new { @class = "btn btn-outline-primary btn-def fa fa-info" }) |
+                    @Html.ActionLink("", "Delete", new { item.Id }, new { @class = "btn btn-outline-primary btn-def fa fa-trash" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div id="pagination"></div>

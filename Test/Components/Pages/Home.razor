@@ -1,0 +1,134 @@
+﻿@using Models;
+@using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
+@using static System.Runtime.InteropServices.JavaScript.JSType
+@page "/"
+@rendermode InteractiveServer
+@inject HttpClient HttpClient
+
+<PageTitle>Home</PageTitle>
+
+
+@if (hasAnyError)
+{
+    <div class="d-grid" style="place-content: center">
+        @foreach (var error in errors)
+        {
+
+            <h3 class="text-danger">Error: @error</h3>
+            <br />
+        }
+    </div>
+}
+@if (isValid)
+{
+    <div class="d-grid" style="place-content: center">
+        <h3 class="text-success">Patient has been succesfully saved.</h3>
+    </div>
+}
+<div class="row" style="place-content: center">
+    <div class="col-md-4" >
+        <EditForm method="post" Model="@Patient" OnSubmit="@Submit" FormName="AddPatient">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="form-group">
+                <label for="Name">Full Name</label>
+                <InputText @bind-Value=Patient.Name class="form-control" id="Name"></InputText>
+                <ValidationMessage For="() => Patient.Name" class="text-danger" />
+            </div>
+            <div class="form-group">
+                <label for="Address">Address</label>
+                <InputText @bind-Value=Patient.Address class="form-control" id="Address"></InputText>
+                <ValidationMessage For="() => Patient.Address" class="text-danger" />
+            </div>
+            <div class="form-group">
+                <label for="TajNumber">Taj Number</label>
+                <InputText @bind-Value=Patient.TajNumber class="form-control" id="TajNumber"></InputText>
+                <ValidationMessage For="() => Patient.TajNumber" class="text-danger" />
+            </div>
+            <div class="form-group">
+                <label for="Complaint">Complaint</label>
+                <InputText @bind-Value=Patient.Complaint class="form-control" id="Complaint"></InputText>
+                <ValidationMessage For="() => Patient.Complaint" class="text-danger" />
+            </div>
+            <div class="form-group">
+                <label for="ArrivedAt">Arrived At</label>
+                <InputDate Type="InputDateType.DateTimeLocal" @bind-Value=Patient.ArrivedAt class="form-control" id="ArrivedAt"></InputDate>
+                <ValidationMessage For="() => Patient.ArrivedAt" class="text-danger" />
+            </div>
+            <input type="submit" value="Submit" class="btn btn-primary" />
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    Patient Patient = new();
+    private bool isValid = false;
+    private bool hasAnyError = false;
+    private List<string> errors = new List<string>();
+    async Task Submit(EditContext editContext)
+    {
+        errors.Clear();
+
+        try
+        {
+            if (Patient.Name != null && Patient.Address != null && Patient.TajNumber != null && Patient.Complaint != null)
+            {
+                if (Patient.TajNumber != null && !Regex.IsMatch(Patient.TajNumber, @"^\d{3}-\d{3}-\d{3}$"))
+                {
+                    errors.Add("Taj number is invalid");
+                    hasAnyError = true;
+                }
+                else
+                {
+                    var tajResponse = await HttpClient.GetFromJsonAsync<bool>($"https://localhost:7294/api/Patient/AddUserIsTajExist/" + Patient.TajNumber);
+
+                    if (tajResponse)
+                    {
+
+                        errors.Add("TajNumber is already exist!");
+                        hasAnyError = true;
+
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(Patient.Name) && Regex.IsMatch(Patient.Name, @"^[a-zA-Z\s]+$"))
+                {
+                    errors.Add("Name is invalid");
+                    hasAnyError = true;
+                }
+
+
+                if (errors.Count == 0)
+                {
+                    DateTime date = new DateTime();
+                    date = Patient.ArrivedAt.UtcDateTime;
+                    Patient.ArrivedAt = date;
+                    var post = await HttpClient.PostAsJsonAsync("https://localhost:7294/api/Patient/AddPatient", Patient);
+
+                    if (post.IsSuccessStatusCode)
+                    {
+
+                        isValid = true;
+                        Patient = new();
+                    }
+                    else
+                    {
+                        errors.Add("someting went wrong");
+                    }
+                }
+            }
+            else
+            {
+                errors.Add("All fields are required");
+                hasAnyError = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add(ex.Message);
+            hasAnyError = true;
+        }
+    }
+
+}

@@ -1,0 +1,47 @@
+﻿@model NurseClient.Models.PatientViewModel
+
+@{
+    ViewData["Title"] = "Nurse View";
+}
+
+<h1>Create Patient</h1>
+
+<hr />
+
+
+<div class=" d-flex justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="Index">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TajNumber" class="control-label"></label>
+                <input asp-for="TajNumber" class="form-control" />
+                <span asp-validation-for="TajNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Complaint" class="control-label"></label>
+                <input asp-for="Complaint" class="form-control" />
+                <span asp-validation-for="Complaint" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ArrivedAt" class="control-label"></label>
+                <input asp-for="ArrivedAt" class="form-control" />
+                <span asp-validation-for="ArrivedAt" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
