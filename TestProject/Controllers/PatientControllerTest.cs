@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using NIDemo.Controllers;
 using NIDemo.Interfaces;
 using NIDemo.Models;
+using NuGet.Protocol;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -69,7 +70,6 @@ namespace TestProject.Controllers
         [Fact]
         public void PatientController_AddPatinet_Name_Returns_BadRequest()
         {
-
             var patient = new Patient();
 
             patient.Name = "";
@@ -84,11 +84,10 @@ namespace TestProject.Controllers
             var controller = new PatientController(_patinetRepository);
 
             var result = controller.AddPatient(patient);
-
-            result.Should().BeOfType(typeof(BadRequestObjectResult));
-            var badRequestResult = result as BadRequestObjectResult;
-            badRequestResult.Value.Should().BeOfType(typeof(SerializableError));
-            badRequestResult.Should().NotBeNull();
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var error = badRequestResult.Value as SerializableError;
+            error.Should().ContainKey("Name");
+            error["Name"].Should().BeEquivalentTo(new[] { "Name is invalid" });
         }
 
         [Fact]
@@ -109,12 +108,12 @@ namespace TestProject.Controllers
             A.CallTo(() => _patinetRepository.AddPatient(patient));
             var controller = new PatientController(_patinetRepository);
 
+            controller.ModelState.Should().BeEmpty();
             var result = controller.AddPatient(patient);
-
-            result.Should().BeOfType(typeof(BadRequestObjectResult));
-            var badRequestResult = result as BadRequestObjectResult;
-            badRequestResult.Value.Should().BeOfType(typeof(SerializableError));
-            badRequestResult.Should().NotBeNull();
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var error = badRequestResult.Value as SerializableError;
+            error.Should().ContainKey("TajNumber");
+            error["TajNumber"].Should().BeEquivalentTo(new[] { "Taj number is invalid" });
         }
 
         [Fact]
@@ -146,17 +145,16 @@ namespace TestProject.Controllers
             patient.LastModifiedAt = DateTime.Now;
 
             A.CallTo(() => _patinetRepository.ModifyPatient(patient));
+
             var result2 = controller.ModifyPatient(patient);
-
-
-            result2.Should().BeOfType(typeof(BadRequestObjectResult));
-            var badRequestResult = result2 as BadRequestObjectResult;
-            badRequestResult.Value.Should().BeOfType(typeof(SerializableError));
-            badRequestResult.Should().NotBeNull();
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result2);
+            var error = badRequestResult.Value as SerializableError;
+            error.Should().ContainKey("TajNumber");
+            error["TajNumber"].Should().BeEquivalentTo(new[] { "Taj number is invalid" });
         }
 
         [Fact]
-        public void PatientController_ModifyPatinet_Name_Returns_BadRequest()
+        public void PatientController_ModifyPatinet_Name()
         {
 
             var controller = new PatientController(_patinetRepository);
@@ -187,11 +185,10 @@ namespace TestProject.Controllers
             
 
             var result2 = controller.ModifyPatient(patient);
-
-            result2.Should().BeOfType(typeof(BadRequestObjectResult));
-            var badRequestResult = result2 as BadRequestObjectResult;
-            badRequestResult.Value.Should().BeOfType(typeof(SerializableError));
-            badRequestResult.Should().NotBeNull();
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result2);
+            var error = badRequestResult.Value as SerializableError;
+            error.Should().ContainKey("Name");
+            error["Name"].Should().BeEquivalentTo(new[] { "Name is invalid" });
         }
     }
 }
