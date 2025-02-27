@@ -53,7 +53,7 @@ namespace NurseClient.Controllers
                 }
 
 
-                if (!string.IsNullOrWhiteSpace(patient.Name) && Regex.IsMatch(patient.Name, @"^[a-zA-Z\s]+$"))
+                if (!string.IsNullOrWhiteSpace(patient.Name) && Regex.IsMatch(patient.Name, @"^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"))
                 {
                     ModelState.AddModelError("Name", "Name is invalid");
                 }
