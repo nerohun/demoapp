@@ -94,7 +94,7 @@
 
                     }
                 }
-                if (!string.IsNullOrWhiteSpace(Patient.Name) && Regex.IsMatch(Patient.Name, @"^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"))
+                if (!Regex.IsMatch(Patient.Name, @"^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"))
                 {
                     errors.Add("Name is invalid");
                     hasAnyError = true;

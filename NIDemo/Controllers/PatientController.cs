@@ -96,7 +96,7 @@ namespace NIDemo.Controllers
         [HttpPost(Name = "AddPatient")]
         public ActionResult AddPatient([FromBody] Patient patient)
         {
-            if (string.IsNullOrWhiteSpace(patient.Name) || (string.IsNullOrWhiteSpace(patient.Name) && Regex.IsMatch(patient.Name, @"^[a-zA-Z\s]+$")))
+            if (!Regex.IsMatch(patient.Name, @"^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"))
             {
                 ModelState.AddModelError("Name", "Name is invalid");
             }
